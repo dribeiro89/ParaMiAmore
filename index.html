@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="es-PE">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nuestro Desafío Diario</title>
+<style>
+:root{--azul:#2f6fb0;--azul-suave:#dfeaf6;--terra:#b5523b;--oro:#e9b44c;--crema:#fbf3e6;--txt:#3a2b26;--muted:#8a7068;--linea:#ecd9c4}
+*{box-sizing:border-box}
+body{margin:0;font-family:Georgia,'Times New Roman',serif;color:var(--txt);min-height:100vh;display:flex;justify-content:center;background:linear-gradient(180deg,#fbf3e6 0%,#f6e1cf 55%,#dfeaf6 100%);background-attachment:fixed}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;opacity:.9;background-image:radial-gradient(circle at 50% 50%,rgba(47,111,176,.13) 0 5px,transparent 6px),radial-gradient(circle at 0 0,rgba(181,82,59,.10) 0 9px,transparent 10px);background-size:34px 34px,34px 34px}
+main{width:100%;max-width:440px;padding:24px 18px}
+.cabecera{text-align:center}
+.zig{height:10px;border-radius:6px;background:repeating-linear-gradient(90deg,var(--terra) 0 10px,var(--oro) 10px 20px,var(--azul) 20px 30px,var(--oro) 30px 40px)}
+h1{font-size:1.45rem;margin:14px 0 2px;color:var(--azul);font-weight:700}
+.sub{text-align:center;color:var(--muted);font-size:.92rem;margin:4px 0 0;font-style:italic}
+.card{background:rgba(255,255,255,.94);border:3px double var(--oro);border-radius:22px;padding:22px;margin-top:18px;box-shadow:0 10px 26px rgba(120,70,40,.12);text-align:center}
+.pregunta{font-size:1.05rem;margin:6px 0 14px;line-height:1.5}
+.seq{font-size:1.5rem;font-weight:700;margin:14px 0;letter-spacing:.2em;word-break:break-all;color:var(--terra)}
+input.resp{width:100%;padding:12px;font-size:1.2rem;text-align:center;border-radius:12px;border:2px solid var(--linea);background:#fff;color:var(--txt);text-transform:uppercase;font-family:inherit}
+button{background:linear-gradient(90deg,var(--azul),var(--terra));color:#fff;border:none;border-radius:14px;padding:13px 22px;font-size:1rem;font-weight:700;cursor:pointer;width:100%;margin-top:12px;font-family:inherit}
+.opciones{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.opc-col{display:grid;gap:8px;margin-top:14px}
+.opc-col button{margin-top:0}
+.op{margin:0;background:var(--crema);color:var(--azul);border:2px solid var(--azul-suave);font-weight:600;padding:16px 8px}
+.volver{background:var(--muted);margin-top:14px}
+.hotel-card{background:var(--crema);border:2px solid var(--azul-suave);border-radius:16px;padding:10px;margin-top:12px;text-align:left;display:flex;flex-direction:column;gap:6px}
+.hotel-card img{width:100%;height:150px;object-fit:cover;border-radius:12px;cursor:zoom-in;display:block}
+.hotel-card .nombre{font-weight:700;color:var(--azul)}
+.hotel-card small{color:var(--muted);line-height:1.45;font-family:system-ui,sans-serif}
+.acciones{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.acciones button{margin-top:6px;padding:10px;font-size:.9rem}
+.acciones .ver{background:var(--muted)}
+.sec{background:var(--muted);margin-top:16px}
+.error{color:var(--terra);min-height:1.2em;margin-top:10px;font-size:.92rem}
+.tipo{display:inline-block;font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;color:var(--terra);font-weight:700;font-family:system-ui,sans-serif}
+.corazon{font-size:4rem;animation:pulse 1.2s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.intro{text-align:left}
+.intro p{margin:0 0 12px;line-height:1.6}
+.revelar img{width:100%;border-radius:16px;margin-top:10px;border:6px solid #fff;box-shadow:0 6px 16px rgba(0,0,0,.15)}
+.revelar .texto{text-align:left;line-height:1.7;font-size:1.02rem;margin:14px 0 6px}
+.carta h2{font-size:1.25rem;color:var(--azul);margin:8px 0 12px}
+.foto-carta{width:100%;border-radius:16px;margin-top:6px;border:6px solid #fff;box-shadow:0 6px 16px rgba(0,0,0,.15)}
+.texto-carta{text-align:left;line-height:1.7;font-size:1.02rem;margin:16px 0 8px}
+.firma{text-align:right;font-style:italic;color:var(--terra);margin:6px 0}
+.puzzle{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;width:100%;max-width:300px;aspect-ratio:1;margin:12px auto}
+.pieza{aspect-ratio:1;background-size:300% 300%;border-radius:8px;border:2px solid #fff;cursor:pointer}
+.pieza.sel{outline:3px solid var(--terra);outline-offset:1px}
+.aviso{background:linear-gradient(135deg,var(--azul-suave),var(--crema));border:2px dashed var(--terra);border-radius:16px;padding:14px;margin-top:12px;text-align:left;font-family:system-ui,sans-serif}
+.musica{margin-top:12px;text-align:center}
+.musica button{width:auto;margin-top:0;padding:8px 16px;font-size:.9rem}
+.panel{background:#fff;border:2px dashed var(--terra);border-radius:14px;padding:12px;margin-top:14px;font-size:.85rem;text-align:left;font-family:system-ui,sans-serif}
+.panel input{width:100%;padding:8px;font-size:1rem;margin-top:6px;border-radius:8px;border:1px solid var(--linea)}
+.panel button{padding:9px;font-size:.9rem;margin-top:10px}
+.gal{position:fixed;inset:0;background:rgba(20,30,50,.94);display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;z-index:10}
+.gal.on{display:flex}
+.gal img{max-width:100%;max-height:70vh;border-radius:14px;object-fit:contain}
+.gal .cont{color:#fff;margin-top:12px;font-size:.95rem;font-family:system-ui,sans-serif}
+.gal .nav{display:flex;gap:10px;width:100%;max-width:420px}
+.gal .nav button{margin-top:0;flex:1}
+.gal .cerrar{position:absolute;top:12px;right:14px;width:auto;background:transparent;font-size:1.8rem;margin:0;padding:4px 12px}
+</style>
+</head>
+<body>
+<main>
+  <div class="cabecera">
+    <div class="zig"></div>
+    <h1>Nuestro Desafío Diario</h1>
+    <p class="sub" id="sub"></p>
+  </div>
+  <div id="musica"></div>
+  <div id="panel"></div>
+  <div class="card" id="area"></div>
+</main>
+
+<div class="gal" id="gal">
+  <button class="cerrar" onclick="cerrarGaleria()">✕</button>
+  <img id="galImg" alt="">
+  <div class="cont" id="galCont"></div>
+  <div class="nav">
+    <button onclick="moverGaleria(-1)">‹ Anterior</button>
+    <button onclick="moverGaleria(1)">Siguiente ›</button>
+  </div>
+</div>
+
+<script>
+/* ===== CONFIGURACIÓN ===== */
+const INICIO = new Date(2026, 9, 25);  // 25 de octubre de 2026
+const DIAS = 5;                        // día 1 = 25, día 4 = 28, día 5 = 29 (final)
+const FECHA_VIAJE = '30 de octubre';   // fecha que ella ve (el viaje real es el 29)
+const MENSAJE_FINAL = 'Hoy hay una sorpresa esperándote 💌'; // cámbialo más tarde
+const AVISO_URL = 'PEGA_AQUI_LA_URL_DE_APPS_SCRIPT'; // URL del script de avisos
+const ES_TEST = new URLSearchParams(location.search).has('teste');
+let fechaSim = null;
+const SAVE = 'desafio-es-pe-v5';
+
+const PARTES = [
+ 'Hola, mi amor. He intentado crear algo diferente para ti, algo que sea solo nuestro.',
+ 'Esta semana cada día tendrás un mimo esperándote, pequeño o grande. Algunos serán un juego, otros una foto o un plan juntos.',
+ 'No te voy a contar todo ahora. Solo te pido una cosa: que juegues conmigo cada día.',
+ 'Mañana empieza. Te quiero, mi amor 💌'
+];
+
+const INTRO = 'Hola, mi amor. Hoy empieza nuestro desafío. Juega conmigo cada día y cada juego te llevará a una sorpresa.';
+
+// Música por día (1 = 25 de octubre ... 4 = 28 de octubre)
+const MUSICA = {1:'dia25.mp3', 2:'dia26.mp3', 3:'dia27.mp3', 4:'dia28.mp3'};
+
+// Foto de cada día: se usa tanto en el puzzle como en la carta de ese día
+const FOTO_DIA = {
+ 1:'Foto1.jpg',   // 25: primer encuentro
+ 2:'Foto2.jpg',   // 26: pedido en namoro, paseo en barco por el Tajo
+ 3:'Foto3.jpg',   // 27: viaje al Perú
+ 4:'Foto4.jpg'    // 28: tres años juntos
+};
+const PUZZLES = FOTO_DIA;
+
+// Cartas de cada día (se muestran después del puzzle)
+const CARTAS = {
+ 1:{titulo:'El día que nos encontramos',
+    texto:'Mi vida cambió por completo desde el día en que nos encontramos. Nunca olvidaré el momento en que subí las escaleras y te vi esperándome: una mujer preciosa, con su lacito en el pelo y una sonrisa que me desarmó por completo. Ese instante lo cambió todo.'},
+ 2:{titulo:'El día que te pedí ser mi novia',
+    texto:'Un paseo en barco por el Tajo que nunca olvidaré. Fue uno de los días más felices de mi vida, porque ese día aceptaste ser mi novia. Desde entonces, cada día contigo es un regalo.'},
+ 3:{titulo:'Perú, tu tierra y tu familia',
+    texto:'Volver a tu tierra después de tres años fue muy especial. Conocí a tu familia, que me acogió como uno más, y recorrimos juntos lugares y vivimos cosas nuevas. Me llevaste incluso en un buggy, algo que no te gusta, y lo hiciste por mí. Ver cuánto amas a tu familia y cuánto te ama ella me enamoró todavía más.'},
+ 4:{titulo:'Tres años juntos',
+    texto:'Tres años en los que hemos hablado, discutido, reído, llorado y, sobre todo, amado. Hemos crecido cada uno por su lado y también juntos, aprendiendo a adaptarnos el uno al otro, a veces no de la mejor manera, pero nunca nos hemos rendido el uno con el otro. Gracias por tres años de todo. Lo mejor está por llegar.'}
+};
+
+/* ===== LISTAS Y MENÚS ===== */
+const lista = arr => arr.map(t=>({texto:t}));
+
+// Película o serie: solo elige la opción final, sin listas de títulos
+const MENU_PELICULA_SERIE = {
+ pregunta:'¿Qué os apetece ver hoy?',
+ opciones:[
+  {texto:'🎬 Película', sub:{pregunta:'¿Dónde la vemos?', opciones:[
+    {texto:'🏠 En casa'},
+    {texto:'🍿 En el cine'}
+  ]}},
+  {texto:'📺 Serie', sub:{pregunta:'¿En qué plataforma?', opciones:[
+    {texto:'Netflix'},
+    {texto:'Disney+'}
+  ]}}
+ ]
+};
+
+const MENU_CENA = {
+ pregunta:'¿Qué cenamos hoy?',
+ opciones:lista(['Peruano','Sushi','Italiano','Chifa'])
+};
+
+/* ===== PASOS DE CADA DÍA ===== */
+const PASOS = {
+ 1:[
+  {t:'anagrama', palabra:'STARBUCKS', pista:'Donde todo empezó', intro:INTRO},
+  {t:'revelar', img:'Starbucks.jpg', texto:'¡Ahí empezó todo! ☕'},
+  {t:'hotel'},
+  {t:'puzzle'}
+ ],
+ 2:[
+  {t:'intruso', opciones:['Filme','Série','Cinema','Ginásio'], correcta:'Ginásio'},
+  {t:'revelar', titulo:'Nuestro primer beso',
+   texto:'Después de aquel susto, cuando volvimos del hospital porque te caíste en la bañera, todavía recuerdo el coche en silencio. Casi sin fuerzas, me preguntaste: "¿Cuánto más tendré que esperar por un beso tuyo?". Me quedé flotando unos segundos. Es uno de los momentos que siempre recordaré.'},
+  {t:'menu', etiqueta:'Película o serie', raiz:MENU_PELICULA_SERIE},
+  {t:'puzzle'}
+ ],
+ 3:[
+  {t:'anagrama', palabra:'CEVICHE', pista:'Nuestro plato favorito'},
+  {t:'revelar', titulo:'Vivir juntos',
+   texto:'Llevábamos poco tiempo juntos cuando tuviste que dejar la casa donde vivías. Aun así, decidimos arriesgarnos y vivir juntos. No me arrepiento ni un segundo; fue una de las mejores decisiones que hemos tomado.'},
+  {t:'menu', etiqueta:'Cena', raiz:MENU_CENA},
+  {t:'puzzle'}
+ ],
+ 4:[
+  {t:'intruso', opciones:['Hotel','Viajar','Passear','Casa'], correcta:'Casa'},
+  {t:'aviso', etiqueta:'Aviso importante', titulo:'🧳 Hora de hacer las maletas', texto:`Mañana nos vamos de passeio. Fecha: ${FECHA_VIAJE}. Prepara todo con calma, que lo demás es sorpresa.`},
+  {t:'puzzle'}
+ ]
+};
+
+/* ===== ALOJAMIENTOS =====
+   Las fotos se buscan por nombre: "<nombre> 1.jpg" a "<nombre> 4.jpg" */
+const HOTELES = {
+ 'Chalets': [
+  {nombre:'Chalet Relógio',
+   desc:'Un chalet con encanto en Sintra, rodeado de la frescura de la sierra y de un silencio que invita a bajar el ritmo. Por la noche, el bosque y las calles empedradas del pueblo crean un ambiente de cuento, perfecto para pasear de la mano y perderse sin prisa.'},
+  {nombre:'Chalet Ficalho',
+   desc:'Una antigua casa de veraneo del siglo XIX, restaurada con mimo para conservar su elegancia clásica. Está en una zona tranquila de Sintra, ideal para despertarse con calma, tomar un café juntos en el jardín y dejarse llevar por la magia del lugar.'},
+  {nombre:'Chalet O Amorzinho',
+   desc:'Un chalet en la zona de la playa de Sintra, donde el aire huele a mar y el ritmo de las olas acompaña cada momento. Es el lugar perfecto para dar un paseo al atardecer, sentir la brisa en la cara y terminar el día junto al océano.'},
+  {nombre:'Chalet Vitorino',
+   desc:'Un chalet en Azenhas do Mar, un pueblo blanco colgado sobre los acantilados del Atlántico. Desde aquí las vistas al océano son un regalo diario, y el pequeño pueblo, con sus callejuelas y su piscina natural frente al mar, invita a vivir un romance sencillo y precioso.'}
+ ],
+ 'Boutique Hotéis': [
+  {nombre:'Charm Nature',
+   desc:'Un alojamiento con encanto rodeado de naturaleza, donde el verde lo envuelve todo y el canto de los pájaros marca el día. Es un refugio perfecto para desconectar del mundo, compartir silencios y redescubrir la calma de estar juntos.'},
+  {nombre:'Eighteen21 Houses',
+   desc:'Casas de diseño cuidado y ambiente íntimo, pensadas para sentirse como un hogar lejos de casa. Cada rincón invita a la intimidad: una copa de vino al caer la tarde, una conversación larga y la sensación de tener todo el tiempo del mundo para los dos.'},
+  {nombre:'Quinta da Maquia',
+   desc:'Una quinta con mucho encanto, de espacios tranquilos y un ambiente rural elegante. Entre jardines y tranquilidad, es ideal para pasear sin rumbo, disfrutar de un desayuno lento y dejarse envolver por una atmósfera llena de calma y romanticismo.'},
+  {nombre:'Passeio Sintra Collection',
+   desc:'Un hotel con encanto en Sintra, a poca distancia de sus palacios y de las rutas por la sierra. Sintra es un lugar de bosques misteriosos y jardines secretos, y aquí podéis vivir un fin de semana de historias, paseos y miradas cómplices.'},
+  {nombre:'Paço do Bispo Boutique House',
+   desc:'Una casa boutique con historia y detalles cuidados en cada espacio. Su carácter auténtico invita a disfrutar de un fin de semana con alma, entre rincones con personalidad, buenas conversaciones y la emoción de descubrir algo nuevo juntos.'}
+ ],
+ 'Turismo rural': [
+  {nombre:'Quinta Verde Sintra',
+   desc:'Una casa de campo rodeada de jardines, a poca distancia de Sintra pero con la paz del campo. Por las mañanas, el canto de los pájaros y el aire fresco; por las tardes, un paseo de la mano entre árboles y flores, como una pequeña escapada solo para vosotros.'},
+  {nombre:'Entre Vinhas & Mar',
+   desc:'Una casa rural entre viñedos y el mar, donde el sabor del vino y la brisa salada se mezclan en cada momento. Es el lugar ideal para brindar juntos al atardecer, pasear entre las viñas y sentir que el mundo se detiene por un fin de semana.'},
+  {nombre:'Villa Cerrado das Fontainhas SPA',
+   desc:'Una villa rural con espacios amplios, spa y un ambiente de campo que invita a relajarse por completo. Un lugar perfecto para mimarse, desconectar del ruido y terminar el día en un silencio cómodo, compartido solo entre los dos.'},
+  {nombre:'Casa Vela',
+   desc:'Una casa rural con encanto, pensada para una escapada íntima y tranquila. Su ambiente sencillo y acogedor es ideal para cocinar juntos, hablar sin prisa y disfrutar de la sensación de tener un pequeño rincón del mundo solo para vosotros.'},
+  {nombre:'Casa Senhoras Rainhas',
+   desc:'Una casa con carácter en Óbidos, una villa medieval amurallada llena de callejuelas blancas, flores en las ventanas y historia en cada esquina. Pasear de noche por sus calles empedradas es una de las experiencias más románticas que podéis vivir juntos.'}
+ ],
+ 'Hotéis': [
+  {nombre:'NH Sintra Centro',
+   desc:'Un hotel en el centro de Sintra, cómodo y muy bien situado para descubrir el pueblo a pie. Desde aquí podéis caminar hasta sus calles de cuento, sentaros a disfrutar de un dulce tradicional y terminar la tarde en una terraza, cerca de todo y con la sierra de fondo.'},
+  {nombre:'Vila Galé Collection Sintra',
+   desc:'Un hotel de la cadena Vila Galé en Sintra, con servicios completos para un fin de semana sin preocupaciones. Tras un día de paseos por palacios y bosques, aquí os esperan un descanso cómodo y momentos para relajaros juntos.'},
+  {nombre:'Azen Cool House',
+   desc:'Una casa moderna cerca del mar, con un ambiente fresco y relajado. El sonido del océano, la luz de la costa y la sensación de vacaciones sin prisa hacen de este lugar un escenario perfecto para escaparos juntos y dejar que el tiempo se estire.'},
+  {nombre:'Pousada Castelo Estremoz',
+   desc:'Una pousada instalada dentro de un castillo en Estremoz, una ciudad del Alentejo famosa por sus murallas y sus calles blancas. Desde sus torres se ven llanuras infinitas, y al caer la noche la historia del lugar hace que todo parezca salido de un cuento.'},
+  {nombre:'Pousada Castelo Alcácer do Sal',
+   desc:'Una pousada en un castillo de Alcácer do Sal, en pleno Alentejo, con murallas antiguas y un ambiente lleno de historia. Es un lugar ideal para sentir la calma del campo, pasear por el pueblo al atardecer y vivir un romance con la sensación de estar en otro tiempo.'}
+ ],
+ 'Glamping': [
+  {nombre:'Sóis Montejunto Eco Lodge',
+   desc:'Un eco-lodge entre la naturaleza, cerca de la sierra de Montejunto. Aquí el silencio se llena de pájaros, de viento entre los árboles y de estrellas por la noche. Es el lugar perfecto para una escapada sencilla, en contacto con la tierra y con el otro.'},
+  {nombre:'Shanti Farm Meco',
+   desc:'Una granja tranquila en Meco, cerca de la costa de Setúbal, con un ambiente relajado y natural. Entre campos y naturaleza, podéis pasear descalzos, compartir una comida al aire libre y disfrutar de un fin de semana lento, sencillo y muy bonito.'},
+  {nombre:'Cedros Nature House',
+   desc:'Un alojamiento en plena naturaleza, con espacios pensados para desconectar. Entre cedros y silencio, es un refugio ideal para caminar de la mano, observar las estrellas y redescubrir lo bonito de las cosas simples.'},
+  {nombre:'Casas EcoNatura',
+   desc:'Casas ecológicas en contacto directo con la naturaleza, pensadas para vivir con respeto por el entorno. Es un lugar perfecto para un fin de semana tranquilo, con mañanas de café en la terraza, paseos entre árboles y noches de cielo despejado.'},
+  {nombre:'Natura Glamping',
+   desc:'Un glamping entre tiendas y naturaleza, para una experiencia diferente y muy especial. Dormir bajo las estrellas con todas las comodidades, despertar con el canto de los pájaros y pasar el día en el campo convierte este fin de semana en algo único para los dos.'}
+ ]
+};
+
+function fotosDe(h){
+  return [1,2,3,4].map(k=>encodeURIComponent(`${h.nombre} ${k}.jpg`));
+}
+
+/* ===== GENERADORES ===== */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function mezclar(arr,rnd){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function revolver(palabra,seed){
+  const rnd=mulberry32(seed);
+  let r;
+  do{ r=mezclar(palabra.split(''),rnd).join('') }while(r===palabra);
+  return r;
+}
+
+/* ===== ESTADO ===== */
+function carga(){
+  try{ return Object.assign({pasos:{},tipo:null,hotel:null}, JSON.parse(localStorage.getItem(SAVE))) }
+  catch(e){ return {pasos:{},tipo:null,hotel:null} }
+}
+let estado=carga();
+function guarda(){ localStorage.setItem(SAVE, JSON.stringify(estado)) }
+let menuRuta=[];
+let puzzle=null;
+
+const area=document.getElementById('area');
+const sub=document.getElementById('sub');
+
+/* ===== FECHAS ===== */
+function hoy(){
+  const h=fechaSim || new Date();
+  return new Date(h.getFullYear(),h.getMonth(),h.getDate());
+}
+function hoyNum(){ return Math.round((hoy()-INICIO)/86400000)+1 }
+function diasHastaInicio(){ return Math.round((INICIO-hoy())/86400000) }
+function diaActual(){ return Math.min(hoyNum(),DIAS) }
+
+/* ===== AVISOS (notificación por email) ===== */
+function notificar(asunto, detalle){
+  if(ES_TEST || !AVISO_URL.startsWith('http')) return;
+  fetch(AVISO_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({asunto,detalle})}).catch(()=>{});
+}
+
+/* ===== MÚSICA ===== */
+const audio=new Audio();
+audio.loop=true;
+audio.addEventListener('play',pintarMusica);
+audio.addEventListener('pause',pintarMusica);
+function pintarMusica(){
+  const cont=document.getElementById('musica');
+  const n=diaActual();
+  if(hoyNum()<1 || n>4){ cont.innerHTML=''; return; }
+  const f=MUSICA[n];
+  if(audio.getAttribute('data-f')!==f){
+    audio.setAttribute('data-f',f);
+    audio.src=f;
+  }
+  cont.innerHTML=`<div class="musica"><button onclick="toggleMusica()">${audio.paused?'🎵 Activar música':'⏸ Pausar música'}</button></div>`;
+}
+function toggleMusica(){
+  if(audio.paused) audio.play().catch(()=>{});
+  else audio.pause();
+}
+
+/* ===== PANEL DE PRUEBA (solo con ?teste) ===== */
+function pintarPanel(){
+  if(!ES_TEST) return;
+  const f=hoy();
+  const iso=`${f.getFullYear()}-${String(f.getMonth()+1).padStart(2,'0')}-${String(f.getDate()).padStart(2,'0')}`;
+  document.getElementById('panel').innerHTML=`<div class="panel">
+    <strong>Modo prueba</strong>
+    <label>Fecha simulada<input type="date" value="${iso}" onchange="cambiarFecha(this.value)"></label>
+    <button onclick="reiniciar()">Reiniciar progreso</button>
+  </div>`;
+}
+function cambiarFecha(v){
+  const [y,m,d]=v.split('-').map(Number);
+  fechaSim=new Date(y,m-1,d);
+  menuRuta=[]; puzzle=null;
+  render();
+}
+function reiniciar(){
+  if(!confirm('¿Borrar todo el progreso de prueba?')) return;
+  localStorage.removeItem(SAVE);
+  estado={pasos:{},tipo:null,hotel:null};
+  menuRuta=[]; puzzle=null;
+  render();
+}
+
+/* ===== GALERÍA ===== */
+let galHotel=null, galIdx=0;
+function abrirGaleria(i){
+  galHotel=HOTELES[estado.tipo][i];
+  galIdx=0;
+  pintarGaleria();
+  document.getElementById('gal').classList.add('on');
+}
+function pintarGaleria(){
+  const fotos=fotosDe(galHotel);
+  const img=document.getElementById('galImg');
+  img.src=fotos[galIdx];
+  img.onerror=()=>{ img.alt='Foto no disponible'; };
+  document.getElementById('galCont').textContent=`${galHotel.nombre} · ${galIdx+1} / 4`;
+}
+function moverGaleria(d){
+  galIdx=(galIdx+d+4)%4;
+  pintarGaleria();
+}
+function cerrarGaleria(){
+  document.getElementById('gal').classList.remove('on');
+}
+
+/* ===== PANTALLAS ===== */
+function render(){
+  pintarPanel();
+  pintarMusica();
+  if(hoyNum()<1){ mostrarIntroPrevia(); return; }
+  const n=diaActual();
+  sub.textContent=`Día ${n} de ${DIAS}`;
+  if(n===DIAS){ mostrarFinal(); return; }
+  const pasos=PASOS[n];
+  const idx=estado.pasos[n]||0;
+  if(idx>=pasos.length){ mostrarCarta(n); return; }
+  ejecutarPaso(n, idx, pasos[idx]);
+}
+
+function avanzar(n){
+  estado.pasos[n]=(estado.pasos[n]||0)+1;
+  guarda();
+  menuRuta=[]; puzzle=null;
+  render();
+}
+
+function ejecutarPaso(n,i,p){
+  switch(p.t){
+    case 'anagrama': return mostrarAnagrama(n,i,p);
+    case 'intruso':  return mostrarIntruso(n,i,p);
+    case 'revelar':  return mostrarRevelar(n,i,p);
+    case 'hotel':    return mostrarHotelPaso();
+    case 'menu':     return mostrarMenu(n,i,p);
+    case 'aviso':    return mostrarAviso(n,i,p);
+    case 'puzzle':   return mostrarPuzzle(n,i);
+  }
+}
+
+function mostrarIntroPrevia(){
+  sub.textContent=`Faltan ${diasHastaInicio()} días para el 25 de octubre`;
+  area.innerHTML=`<div class="intro">${PARTES.map(p=>`<p>${p}</p>`).join('')}</div>`;
+}
+
+function mostrarAnagrama(n,i,p){
+  const letras=revolver(p.palabra, n*101+i);
+  area.innerHTML=`${p.intro?`<p class="pregunta">${p.intro}</p>`:''}
+    <span class="tipo">Palabra desordenada</span>
+    <p class="pregunta">Reordena las letras para formar la palabra.</p>
+    <div class="seq">${letras.split('').join(' ')}</div>
+    <p class="sub">Pista: ${p.pista}</p>
+    <input class="resp" id="r" autocomplete="off" autocapitalize="characters" placeholder="Respuesta">
+    <button onclick="respAnagrama(${n},${i})">Confirmar</button>
+    <div class="error" id="error"></div>`;
+}
+
+function respAnagrama(n,i){
+  const v=document.getElementById('r').value.trim().toUpperCase();
+  if(v===PASOS[n][i].palabra) avanzar(n);
+  else document.getElementById('error').textContent='Todavía no es esa. ¡Inténtalo otra vez!';
+}
+
+function mostrarIntruso(n,i,p){
+  const ops=mezclar(p.opciones, mulberry32(n*37+i));
+  area.innerHTML=`<span class="tipo">Palabra intrusa</span>
+    <p class="pregunta">¿Cuál de estas palabras no pertenece al grupo?</p>
+    <div class="opciones">${ops.map((o,k)=>`<button class="op" onclick="respIntruso(${n},${i},${k})">${o}</button>`).join('')}</div>
+    <div class="error" id="error"></div>`;
+}
+
+function respIntruso(n,i,k){
+  const p=PASOS[n][i];
+  const ops=mezclar(p.opciones, mulberry32(n*37+i));
+  if(ops[k]===p.correcta) avanzar(n);
+  else document.getElementById('error').textContent='No es esa. ¡Inténtalo otra vez!';
+}
+
+function mostrarRevelar(n,i,p){
+  area.innerHTML=`<div class="revelar">
+    <span class="tipo">${p.titulo?'Para ti':'Sorpresa'}</span>
+    ${p.titulo?`<h2 style="margin:8px 0;color:var(--azul);font-size:1.2rem">${p.titulo}</h2>`:''}
+    <p class="texto">${p.texto}</p>
+    ${p.img?`<img src="${p.img}" alt="" onerror="this.remove()">`:''}
+    <button onclick="avanzar(${n})">Continuar</button>
+  </div>`;
+}
+
+function mostrarAviso(n,i,p){
+  area.innerHTML=`<span class="tipo">${p.etiqueta}</span>
+    <div class="aviso"><strong>${p.titulo}</strong><p style="margin:8px 0 0;line-height:1.5">${p.texto}</p></div>
+    <button onclick="avanzar(${n})">Continuar</button>`;
+}
+
+/* ----- Menú de dos niveles con botón de volver ----- */
+function nodoRuta(raiz, ruta){
+  let nodo=raiz;
+  ruta.forEach(k=>{ nodo=nodo.opciones[k].sub });
+  return nodo;
+}
+
+function mostrarMenu(n,i,p){
+  const nodo=nodoRuta(p.raiz, menuRuta);
+  const volver=menuRuta.length?`<button class="volver" onclick="volverMenu(${n},${i})">‹ Volver atrás</button>`:'';
+  const botones=nodo.opciones.map((o,k)=> o.sub
+     ? `<button class="op" style="width:100%" onclick="entrarMenu(${n},${i},${k})">${o.texto}</button>`
+     : `<button class="op" style="width:100%" onclick="escoger(${n},${i},${k})">${o.texto}<br><small style="font-weight:400">Escoger</small></button>`
+  ).join('');
+  area.innerHTML=`<span class="tipo">${p.etiqueta}</span>
+    <p class="pregunta">${nodo.pregunta}</p>
+    <div class="opc-col">${botones}</div>
+    ${volver}`;
+}
+
+function entrarMenu(n,i,k){ menuRuta.push(k); render(); }
+function volverMenu(n,i){ menuRuta.pop(); render(); }
+
+function escoger(n,i,k){
+  const p=PASOS[n][i];
+  let nodo=p.raiz;
+  const camino=[p.etiqueta];
+  menuRuta.forEach(j=>{ camino.push(nodo.opciones[j].texto); nodo=nodo.opciones[j].sub });
+  camino.push(nodo.opciones[k].texto);
+  notificar(`Elección: ${p.etiqueta}`, camino.join(' › '));
+  avanzar(n);
+}
+
+/* ----- Hotel ----- */
+function mostrarHotelPaso(){
+  if(!estado.tipo) mostrarTipos();
+  else mostrarHoteles();
+}
+
+function mostrarTipos(){
+  const tipos=Object.keys(HOTELES);
+  area.innerHTML=`<span class="tipo">Escapadita</span>
+    <p class="pregunta">Primero, elige el tipo de estadia.</p>
+    <div class="opciones">
+      ${tipos.map(t=>`<button class="op" onclick="elegirTipo('${t}')">${t}</button>`).join('')}
+    </div>`;
+}
+
+function mostrarHoteles(){
+  const lista=HOTELES[estado.tipo];
+  area.innerHTML=`<span class="tipo">${estado.tipo}</span>
+    <p class="pregunta">Mira las fotos y elige dónde quieres pasar el fin de semana.</p>
+    ${lista.map((h,i)=>`<div class="hotel-card">
+        <img src="${fotosDe(h)[0]}" alt="" onclick="abrirGaleria(${i})" onerror="this.remove()">
+        <span class="nombre">${h.nombre}</span>
+        <small>${h.desc}</small>
+        <div class="acciones">
+          <button class="ver" onclick="abrirGaleria(${i})">Ver fotos</button>
+          <button onclick="elegirHotel(${i})">Escoger</button>
+        </div>
+      </div>`).join('')}
+    <button class="sec" onclick="cambiarTipo()">Cambiar tipo de estadia</button>`;
+}
+
+function elegirTipo(t){
+  estado.tipo=t;
+  guarda();
+  render();
+}
+
+function cambiarTipo(){
+  estado.tipo=null;
+  estado.hotel=null;
+  guarda();
+  render();
+}
+
+function elegirHotel(i){
+  const h=HOTELES[estado.tipo][i];
+  estado.hotel=h.nombre;
+  notificar('Hotel elegido', `${estado.tipo} › ${h.nombre}`);
+  avanzar(diaActual());
+}
+
+/* ----- Puzzle ----- */
+function mostrarPuzzle(n,i){
+  if(!puzzle || puzzle.dia!==n){
+    let o=[0,1,2,3,4,5,6,7,8];
+    do{ o=mezclar(o, Math.random) } while(o.every((v,k)=>v===k));
+    puzzle={dia:n, orden:o, sel:null, img:PUZZLES[n]};
+  }
+  area.innerHTML=`<span class="tipo">Puzzle</span>
+    <p class="pregunta">Toca dos piezas para cambiarlas de sitio. Cuando la foto esté completa, se abrirá tu mensaje de hoy.</p>
+    <div class="puzzle" id="tablero"></div>`;
+  pintarTablero();
+}
+
+function pintarTablero(){
+  document.getElementById('tablero').innerHTML=puzzle.orden.map((v,k)=>
+    `<div class="pieza ${puzzle.sel===k?'sel':''}" style="background-image:url('${puzzle.img}');background-position:${(v%3)*50}% ${Math.floor(v/3)*50}%" onclick="tocarPieza(${k})"></div>`
+  ).join('');
+}
+
+function tocarPieza(k){
+  if(puzzle.sel===null){ puzzle.sel=k; }
+  else if(puzzle.sel===k){ puzzle.sel=null; }
+  else {
+    const s=puzzle.sel;
+    [puzzle.orden[s], puzzle.orden[k]]=[puzzle.orden[k], puzzle.orden[s]];
+    puzzle.sel=null;
+    if(puzzle.orden.every((v,x)=>v===x)){
+      avanzar(puzzle.dia);
+      return;
+    }
+  }
+  pintarTablero();
+}
+
+/* ----- Carta del día (misma foto que el puzzle) ----- */
+function mostrarCarta(n){
+  const c=CARTAS[n];
+  area.innerHTML=`<div class="carta">
+    <span class="tipo">Para ti · carta ${n} de 4</span>
+    <h2>${c.titulo}</h2>
+    <img class="foto-carta" src="${FOTO_DIA[n]}" alt="" onerror="this.remove()">
+    <p class="texto-carta">${c.texto}</p>
+    <p class="firma">Con todo mi amor 💕</p>
+    <p class="sub" style="margin-top:14px">Vuelve mañana para la siguiente sorpresa 💌</p>
+  </div>`;
+}
+
+function mostrarFinal(){
+  sub.textContent='';
+  area.innerHTML=`<div class="corazon">💌</div><p class="pregunta">${MENSAJE_FINAL}</p>`;
+}
+
+render();
+</script>
+</body>
+</html>
